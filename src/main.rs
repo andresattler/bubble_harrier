@@ -105,10 +105,10 @@ fn main() {
         (&vertex_data, index_data);
 
     let texels = [
-        CUBE_COLOR.clone(),
-        CUBE_COLOR.clone(),
-        CUBE_COLOR.clone(),
-        CUBE_COLOR.clone(),
+        CUBE_COLOR,
+        CUBE_COLOR,
+        CUBE_COLOR,
+        CUBE_COLOR,
     ];
     let (_, texture_view) = factory.create_texture_immutable::<gfx::format::Rgba8>(
         gfx::texture::Kind::D2(2, 2, gfx::texture::AaMode::Single),
