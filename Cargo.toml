@@ -1,0 +1,14 @@
+[package]
+name = "game_jam"
+version = "0.1.0"
+authors = ["andresattler <andressattler.webdev@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+piston_window = "0.105.0"
+gfx = "0.18.1"
+gfx_device_gl = "0.16.2"
+vecmath = "1.0.0"
+camera_controllers = "0.31.0"
+rand = "0.6.0"
+shader_version = "0.6.0"
