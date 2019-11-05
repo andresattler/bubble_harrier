@@ -1,7 +1,7 @@
 use crate::util::Vertex;
 
 struct Cube {
-    pub pos: (f32, f32)
+    pub pos: (i8, i8, i8)
 }
 
 pub struct Scene {
@@ -17,9 +17,9 @@ impl Scene {
             cubes: vec![],
         }
     }
-    pub fn add_cube(&mut self, x:f32, y: f32) {
+    pub fn add_cube(&mut self, x:i8, y: i8, z: i8) {
         let cube = Cube {
-         pos: (x, y)
+         pos: (x, y, z)
         };
         self.cubes.push(cube);
     }
@@ -30,35 +30,35 @@ impl Scene {
             let i = i as u16;
             vertices.extend(&[
                 //top (0, 0, 1)
-                Vertex::new([-1, -1, 1], CUBE_COLOR),
-                Vertex::new([1, -1, 1], CUBE_COLOR),
-                Vertex::new([1, 1, 1], CUBE_COLOR),
-                Vertex::new([-1, 1, 1], CUBE_COLOR),
+                Vertex::new([-1 + cube.pos.0, -1 + cube.pos.1, 1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([1 + cube.pos.0, -1 + cube.pos.1, 1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([1 + cube.pos.0, 1 + cube.pos.1, 1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([-1 + cube.pos.0, 1 + cube.pos.1, 1 + cube.pos.2], CUBE_COLOR),
                 //bottom (0, 0, -1)
-                Vertex::new([1, 1, -1], CUBE_COLOR),
-                Vertex::new([-1, 1, -1], CUBE_COLOR),
-                Vertex::new([-1, -1, -1], CUBE_COLOR),
-                Vertex::new([1, -1, -1], CUBE_COLOR),
+                Vertex::new([1 + cube.pos.0, 1 + cube.pos.1, -1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([-1 + cube.pos.0, 1 + cube.pos.1, -1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([-1 + cube.pos.0, -1 + cube.pos.1, -1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([1 + cube.pos.0, -1 + cube.pos.1, -1 + cube.pos.2], CUBE_COLOR),
                 //right (1, 0, 0)
-                Vertex::new([1, -1, -1], CUBE_COLOR),
-                Vertex::new([1, 1, -1], CUBE_COLOR),
-                Vertex::new([1, 1, 1], CUBE_COLOR),
-                Vertex::new([1, -1, 1], CUBE_COLOR),
+                Vertex::new([1 + cube.pos.0, -1 + cube.pos.1, -1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([1 + cube.pos.0, 1 + cube.pos.1, -1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([1 + cube.pos.0, 1 + cube.pos.1, 1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([1 + cube.pos.0, -1 + cube.pos.1, 1 + cube.pos.2], CUBE_COLOR),
                 //left (-1, 0, 0)
-                Vertex::new([-1, 1, 1], CUBE_COLOR),
-                Vertex::new([-1, -1, 1], CUBE_COLOR),
-                Vertex::new([-1, -1, -1], CUBE_COLOR),
-                Vertex::new([-1, 1, -1], CUBE_COLOR),
+                Vertex::new([-1 + cube.pos.0, 1 + cube.pos.1, 1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([-1 + cube.pos.0, -1 + cube.pos.1, 1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([-1 + cube.pos.0, -1 + cube.pos.1, -1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([-1 + cube.pos.0, 1 + cube.pos.1, -1 + cube.pos.2], CUBE_COLOR),
                 //front (0, 1, 0)
-                Vertex::new([-1, 1, -1], CUBE_COLOR),
-                Vertex::new([1, 1, -1], CUBE_COLOR),
-                Vertex::new([1, 1, 1], CUBE_COLOR),
-                Vertex::new([-1, 1, 1], CUBE_COLOR),
+                Vertex::new([-1 + cube.pos.0, 1 + cube.pos.1, -1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([1 + cube.pos.0, 1 + cube.pos.1, -1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([1 + cube.pos.0, 1 + cube.pos.1, 1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([-1 + cube.pos.0, 1 + cube.pos.1, 1 + cube.pos.2], CUBE_COLOR),
                 //back (0, -1, 0)
-                Vertex::new([1, -1, 1], CUBE_COLOR),
-                Vertex::new([-1, -1, 1], CUBE_COLOR),
-                Vertex::new([-1, -1, -1], CUBE_COLOR),
-                Vertex::new([1, -1, -1], CUBE_COLOR),
+                Vertex::new([0 + cube.pos.0, -1 + cube.pos.1, 1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([-1 + cube.pos.0, -1 + cube.pos.1, 1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([-1 + cube.pos.0, -1 + cube.pos.1, -1 + cube.pos.2], CUBE_COLOR),
+                Vertex::new([1 + cube.pos.0, -1 + cube.pos.1, -1 + cube.pos.2], CUBE_COLOR),
             ]);
             for face_index in 0..6 {
                 let d = face_index + i;

@@ -46,7 +46,7 @@ fn main() {
 
     let mut scene = Scene::new();
 
-    scene.add_cube(1.0, 1.0);
+    scene.add_cube(2, 0, 2);
 
     let (vertex_data, index_data) = scene.get_vertices_indices();
     let index_data_slice = &index_data[..];
