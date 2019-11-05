@@ -29,12 +29,8 @@ impl Commandable for Player {
                 let scale: Vector = [dir[0], dir[1], 1.].into();
                 let vel = self.transform.vel;
                 self.transform.vel = [
-                    (vel[0] + scale[0] * Self::STD_VEL[0])
-                        .max(Game::LEFT_BOUND)
-                        .min(Game::RIGHT_BOUND),
-                    (vel[1] + scale[1] * Self::STD_VEL[1])
-                        .max(Game::LOWER_BOUND)
-                        .min(Game::UPPER_BOUND),
+                    (vel[0] + scale[0] * Self::STD_VEL[0]),
+                    (vel[1] + scale[1] * Self::STD_VEL[1]),
                     vel[2],
                 ]
                 .into()
