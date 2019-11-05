@@ -1,7 +1,7 @@
 [package]
 name = "game_jam"
 version = "0.1.0"
-authors = ["andresattler <andressattler.webdev@gmail.com>"]
+authors = ["andresattler <andressattler.webdev@gmail.com>", "Paul Martensen <paul.martensen@gmx.de>"]
 edition = "2018"
 
 [dependencies]
@@ -12,3 +12,4 @@ vecmath = "1.0.0"
 camera_controllers = "0.31.0"
 rand = "0.6.0"
 shader_version = "0.6.0"
+nalgebra = "*"
