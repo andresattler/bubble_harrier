@@ -4,7 +4,16 @@ version = "0.1.0"
 authors = ["andresattler <andressattler.webdev@gmail.com>", "Paul Martensen <paul.martensen@gmx.de>"]
 edition = "2018"
 
+[features]
+shred_nightly = ["shred/nightly"]
+default = ["shred_nightly"]
+
 [dependencies]
 rand = "0.6.0"
 nalgebra = "*"
 kiss3d = "*"
+specs = "0.15.1"
+specs_bundler = "0.6.0"
+specs_transform = "0.5.0"
+specs_time = "0.6.1"
+shred = "0.9.3"
