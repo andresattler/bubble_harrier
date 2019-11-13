@@ -1,9 +1,8 @@
-use crate::bundles::KissBundle;
+use crate::bundles::{KissBundle, SimBundle};
 use crate::{components::*, util::*};
 use specs::prelude::*;
 use specs_bundler::Bundler;
-use specs_time::TimeBundle;
-use specs_transform::{Transform3D, TransformBundle};
+use specs_transform::Transform3D;
 
 pub struct Game<'s> {
     world: World,
@@ -13,26 +12,14 @@ pub struct Game<'s> {
 impl<'s> Game<'s> {
     pub fn new() -> Self {
         let mut world: World = World::new();
-        let trans: Transform3D<D> = Transform3D::default();
-
-        world.register::<ObjectKind>();
-        world.register::<Vel>();
-        world.register::<Transform>();
-        world
-            .create_entity()
-            .with(ObjectKind::Player)
-            .with(trans)
-            .with(Vel::from([0., 0., 30.]))
-            .build();
 
         let dispatcher = Bundler::new(&mut world, DispatcherBuilder::new())
-            .bundle(TimeBundle::<f64>::default())
-            .unwrap()
-            .bundle(TransformBundle::<f32>::default())
-            .unwrap()
+            .bundle(SimBundle::default())
+            .expect("Unable to bundle SimBundle")
             .bundle(KissBundle::default())
             .expect("Unable to bundle KissBundle")
             .build();
+        add_entities(&mut world);
 
         Self { world, dispatcher }
     }
@@ -46,4 +33,18 @@ impl<'s> Game<'s> {
             self.run_frame()
         }
     }
+}
+
+fn add_entities(world: &mut World) {
+    world
+        .create_entity()
+        .with(ObjectKind::Obstacle)
+        .with(Transform3D::<D>::default().with_position([3., 0., 40.]))
+        .build();
+    world
+        .create_entity()
+        .with(ObjectKind::Player)
+        .with(Transform3D::<D>::default())
+        .with(Vel::from([0., 0., 30.]))
+        .build();
 }

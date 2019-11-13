@@ -21,11 +21,25 @@ impl Into<Vel> for ObjectKind {
     }
 }
 
+#[derive(Clone, Copy, Debug)]
 pub struct Vel([D; 3]);
 
 impl From<[D; 3]> for Vel {
     fn from(i: [D; 3]) -> Self {
         Vel(i)
+    }
+}
+
+impl Into<[D; 3]> for &Vel {
+    fn into(self) -> [D; 3] {
+        self.0
+    }
+}
+
+impl Into<Vector> for Vel {
+    fn into(self) -> Vector {
+        let points: [D; 3] = (&self).into();
+        Vector::from(points)
     }
 }
 
