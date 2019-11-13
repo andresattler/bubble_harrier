@@ -27,6 +27,7 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for SimBundle<'deps> {
         bundler.world.register::<ObjectKind>();
         bundler.world.register::<Vel>();
         bundler.world.register::<Transform>();
+        bundler.world.register::<Health>();
         bundler = bundler
             .bundle(TimeBundle::<TimePrecision>::default())
             .unwrap()

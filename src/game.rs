@@ -40,11 +40,13 @@ fn add_entities(world: &mut World) {
         .create_entity()
         .with(ObjectKind::Obstacle)
         .with(Transform3D::<D>::default().with_position([3., 0., 40.]))
+        .with(Health { current: 5, full: 5 })
         .build();
     world
         .create_entity()
         .with(ObjectKind::Player)
         .with(Transform3D::<D>::default())
         .with(Vel::from([0., 0., 30.]))
+        .with(Health { current: 1, full: 1 })
         .build();
 }
