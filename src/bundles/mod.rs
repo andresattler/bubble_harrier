@@ -1,3 +1,5 @@
 mod kiss;
+mod sim;
 
-pub use kiss::KissBundle;
+pub(crate) use kiss::{CurrentInput, KissBundle};
+pub(crate) use sim::SimBundle;
