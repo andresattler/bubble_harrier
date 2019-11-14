@@ -27,9 +27,16 @@ impl<'s> specs::System<'s> for MoveSystem {
                 };
                 points[0] = x_movement;
             }
-            let new_pos: Vector =
+            let new_pos =
                 Vector::from(transform.position) + Vector::from(points).scale(time.delta());
-            transform.position = new_pos.into();
+            transform.position = in_bounds(new_pos);
         }
     }
+}
+
+/// Converts a vector to an array and makes sure the x position is in bounds.
+fn in_bounds(ve: Vector) -> [D; 3] {
+    let mut points: [D; 3] = ve.into();
+    points[0] = points[0].min(LEFT_BOUND).max(RIGHT_BOUND);
+    points
 }

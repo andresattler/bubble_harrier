@@ -21,7 +21,8 @@ fn setup_box(window: &mut Window) {
 }
 
 fn setup_ground(window: &mut Window) {
-    let mut ground = window.add_quad(10., 10_000., 5, 5);
+    let width = (LEFT_BOUND - RIGHT_BOUND).abs();
+    let mut ground = window.add_quad(width, 10_000., 5, 5);
     let grot = UnitQuaternion::from_axis_angle(&Vector::x_axis(), PI / 2.);
     ground.append_rotation(&grot);
     ground.append_translation(&Translation3::new(0., 0., 0.));
