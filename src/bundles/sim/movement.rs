@@ -5,6 +5,12 @@ use specs::prelude::*;
 
 pub struct MoveSystem;
 
+impl MoveSystem {
+    pub fn name() -> &'static str {
+        "sim::move_system"
+    }
+}
+
 impl<'s> specs::System<'s> for MoveSystem {
     type SystemData = (
         WriteStorage<'s, Transform>,
