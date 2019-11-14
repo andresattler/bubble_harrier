@@ -2,6 +2,11 @@ use nalgebra::*;
 use specs_transform::Transform3D;
 use std::time::Duration;
 
+/// Left bound of the level.
+pub(crate) static LEFT_BOUND: D = 7.;
+/// Right bound of the level.
+pub(crate) static RIGHT_BOUND: D = -7.;
+
 /// Aliases and helpful functions that can be used throughout the application.
 
 /// The precision of the game simulation.
