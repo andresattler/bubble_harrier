@@ -1,7 +1,9 @@
+mod health;
 mod movement;
 
 use super::CurrentInput;
 use crate::{components::*, util::*};
+use health::HealthSystem;
 use movement::MoveSystem;
 use specs::prelude::*;
 use specs_bundler::{Bundle, Bundler};
@@ -38,6 +40,10 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for SimBundle<'deps> {
             "movement_system",
             &[TimeSystem::<TimePrecision>::name()],
         );
+        bundler.dispatcher_builder =
+            bundler
+                .dispatcher_builder
+                .with(HealthSystem, "health_system", &[]);
         Ok(bundler)
     }
 }
