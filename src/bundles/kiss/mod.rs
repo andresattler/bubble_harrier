@@ -3,6 +3,7 @@ mod draw;
 mod exit;
 mod input;
 mod setup;
+mod ui;
 
 use camera::CameraSystem;
 use draw::DrawSystem;
@@ -12,6 +13,7 @@ use kiss3d::window::Window;
 use specs_bundler::{Bundle, Bundler};
 use std::cell::RefCell;
 use std::rc::Rc;
+use ui::UiSystem;
 
 pub use input::CurrentInput;
 
@@ -35,6 +37,7 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for KissBundle<'deps> {
         bundler.dispatcher_builder = bundler
             .dispatcher_builder
             .with_thread_local(InputSystem::new(shared_window.clone()))
+            .with_thread_local(UiSystem::new(shared_window.clone()))
             .with_thread_local(DrawSystem::new(shared_window.clone()))
             .with_thread_local(CameraSystem::new(shared_window.clone()))
             .with_thread_local(ExitSystem::new(shared_window.clone()));
