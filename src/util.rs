@@ -1,6 +1,12 @@
 use nalgebra::*;
 use specs_transform::Transform3D;
 use std::time::Duration;
+use std::f32::consts::PI;
+
+/// Left bound of the level.
+pub(crate) static LEFT_BOUND: D = 7.;
+/// Right bound of the level.
+pub(crate) static RIGHT_BOUND: D = -7.;
 
 /// Left bound of the level.
 pub(crate) static LEFT_BOUND: D = 7.;
@@ -30,6 +36,6 @@ pub fn translate_trans(t: &Transform) -> Isometry3<D> {
     let translation: Translation3<D> = Translation3::from(Vector::from(t.position));
     Isometry3::from_parts(
         translation,
-        UnitQuaternion::from_axis_angle(&Vector::x_axis(), 1.),
+        UnitQuaternion::from_axis_angle(&Vector::x_axis(), PI / 2.),
     )
 }
