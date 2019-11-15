@@ -1,15 +1,23 @@
-name: Rust
-
 on: [push]
 
+name: build
+
 jobs:
-  build:
-
+  check:
+    name: Rust project
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v1
-    - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+      - uses: actions/checkout@master
+      - name: Install latest nightly
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: nightly
+            override: true
+
+      # `cargo check` command here will use installed `nightly`
+      # as it set as an "override" for current directory
+
+      - name: Run cargo check
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
