@@ -1,12 +1,7 @@
 use nalgebra::*;
 use specs_transform::Transform3D;
-use std::time::Duration;
 use std::f32::consts::PI;
-
-/// Left bound of the level.
-pub(crate) static LEFT_BOUND: D = 7.;
-/// Right bound of the level.
-pub(crate) static RIGHT_BOUND: D = -7.;
+use std::time::Duration;
 
 /// Left bound of the level.
 pub(crate) static LEFT_BOUND: D = 7.;
