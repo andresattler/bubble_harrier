@@ -39,6 +39,7 @@ fn add_entities(world: &mut World) {
     world
         .create_entity()
         .with(ObjectKind::Obstacle)
+        .with(Extent::new(1.))
         .with(Transform3D::<D>::default().with_position([3., 0., 40.]))
         .build();
     world
@@ -46,5 +47,6 @@ fn add_entities(world: &mut World) {
         .with(ObjectKind::Player)
         .with(Transform3D::<D>::default())
         .with(Vel::from([0., 0., 30.]))
+        .with(Extent::new(1.))
         .build();
 }
