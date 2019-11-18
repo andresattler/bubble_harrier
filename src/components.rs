@@ -46,3 +46,12 @@ impl Into<Vector> for Vel {
 impl Component for Vel {
     type Storage = DenseVecStorage<Self>;
 }
+
+pub struct Health {
+    pub current: i32,
+    pub full: i32,
+}
+
+impl Component for Health {
+    type Storage = DenseVecStorage<Self>;
+}
