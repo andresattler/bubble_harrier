@@ -1,5 +1,8 @@
 use crate::util::*;
+use nalgebra::origin;
+use nc::bounding_volume::aabb::AABB;
 use specs::prelude::*;
+use std::convert::AsRef;
 
 #[derive(Clone, Copy, Debug)]
 pub enum ObjectKind {
@@ -19,6 +22,23 @@ impl Into<Vel> for ObjectKind {
             ObjectKind::Obstacle => Vel([0., 0., 0.]),
         }
     }
+}
+
+impl ObjectKind {
+    #[inline]
+    pub fn is_player(self) -> bool {
+        match self {
+            ObjectKind::Obstacle => false,
+            ObjectKind::Player => true,
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Default)]
+pub struct Collision;
+
+impl Component for Collision {
+    type Storage = NullStorage<Self>;
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -45,4 +65,25 @@ impl Into<Vector> for Vel {
 
 impl Component for Vel {
     type Storage = DenseVecStorage<Self>;
+}
+
+/// Hitbox with different shapes
+pub type BBox = AABB<D>;
+pub struct Extent(pub BBox);
+
+impl Component for Extent {
+    type Storage = DenseVecStorage<Self>;
+}
+
+impl Extent {
+    pub fn new(scale: D) -> Self {
+        Self(BBox::from_half_extents(
+            Point::origin(),
+            Vector::from([1., 1., 1.]).scale(scale),
+        ))
+    }
+
+    pub fn bbox(&self) -> &BBox {
+        &self.0
+    }
 }
