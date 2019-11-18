@@ -1,10 +1,12 @@
 mod collide;
+mod health;
 mod movement;
 mod score;
 
 use super::CurrentInput;
 use crate::{components::*, util::*};
 use collide::CollisionSystem;
+use health::HealthSystem;
 use movement::MoveSystem;
 use score::ScoreSystem;
 use specs::prelude::*;
@@ -35,7 +37,9 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for SimBundle<'deps> {
         bundler.world.register::<Transform>();
         bundler.world.register::<Extent>();
         bundler.world.register::<Collision>();
+        bundler.world.register::<Health>();
         bundler.world.insert(Score::default());
+
         bundler = bundler
             .bundle(TimeBundle::<TimePrecision>::default())
             .unwrap()
@@ -53,7 +57,8 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for SimBundle<'deps> {
                 CollisionSystem::name(),
                 &[MoveSystem::name()],
             )
-            .with(ScoreSystem, "score_system", &[MoveSystem::name()]);
+            .with(ScoreSystem, "score_system", &[MoveSystem::name()])
+            .with(HealthSystem, "health_system", &[CollisionSystem::name()]);
         Ok(bundler)
     }
 }

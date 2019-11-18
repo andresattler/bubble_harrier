@@ -20,11 +20,11 @@ impl<'s> Game<'s> {
             .expect("Unable to bundle KissBundle")
             .build();
         add_entities(&mut world);
-
         Self { world, dispatcher }
     }
 
     pub fn run_frame(&mut self) {
+        self.world.maintain();
         self.dispatcher.dispatch(&self.world);
     }
 
@@ -41,6 +41,20 @@ fn add_entities(world: &mut World) {
         .with(ObjectKind::Obstacle)
         .with(Extent::new(1.))
         .with(Transform3D::<D>::default().with_position([3., 0., 40.]))
+        .with(Health {
+            current: 1,
+            full: 1,
+        })
+        .build();
+    // dead entity to test the health-system
+    world
+        .create_entity()
+        .with(ObjectKind::Obstacle)
+        .with(Transform3D::<D>::default().with_position([-2., 0., 50.]))
+        .with(Health {
+            current: 0,
+            full: 1,
+        })
         .build();
     world
         .create_entity()
@@ -48,5 +62,9 @@ fn add_entities(world: &mut World) {
         .with(Transform3D::<D>::default())
         .with(Vel::from([0., 0., 30.]))
         .with(Extent::new(1.))
+        .with(Health {
+            current: 5,
+            full: 5,
+        })
         .build();
 }

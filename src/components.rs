@@ -1,8 +1,6 @@
 use crate::util::*;
-use nalgebra::origin;
 use nc::bounding_volume::aabb::AABB;
 use specs::prelude::*;
-use std::convert::AsRef;
 
 #[derive(Clone, Copy, Debug)]
 pub enum ObjectKind {
@@ -86,4 +84,13 @@ impl Extent {
     pub fn bbox(&self) -> &BBox {
         &self.0
     }
+}
+
+pub struct Health {
+    pub current: i32,
+    pub full: i32,
+}
+
+impl Component for Health {
+    type Storage = DenseVecStorage<Self>;
 }
