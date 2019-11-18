@@ -33,7 +33,11 @@ impl<'s> specs::System<'s> for DrawSystem {
         self.clear();
         for (trans, kind) in (&transforms, &object_kinds).join() {
             let mut node = match kind {
-                ObjectKind::Player => self.win.borrow_mut().add_cube(1., 1., 1.),
+                ObjectKind::Player => {
+                    let mut n = self.win.borrow_mut().add_cube(1., 1., 1.);
+                    n.set_color(243. / 255., 156. / 255., 18. / 255.);
+                    n
+                },
                 ObjectKind::Obstacle => self.win.borrow_mut().add_sphere(1.),
             };
             node.append_transformation(&translate_trans(&trans));

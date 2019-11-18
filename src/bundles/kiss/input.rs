@@ -17,8 +17,8 @@ impl InputSystem {
         Self { win }
     }
 
-    pub fn name() -> String {
-        "kiss::input_system".to_owned()
+    pub fn name() -> &'static str {
+        "kiss::input_system"
     }
 }
 

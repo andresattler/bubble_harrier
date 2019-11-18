@@ -17,12 +17,14 @@ fn setup(window: &mut Window) {
 
 fn setup_box(window: &mut Window) {
     window.set_light(Light::StickToCamera);
-    window.set_background_color(0.1, 0.1, 1.);
+    window.set_background_color(41. / 255., 128. / 255., 185. / 255.);
 }
 
 fn setup_ground(window: &mut Window) {
-    let mut ground = window.add_quad(10., 10_000., 5, 5);
+    let width = (LEFT_BOUND - RIGHT_BOUND).abs();
+    let mut ground = window.add_quad(width, 10_000., 5, 5);
+    ground.set_color(52. / 255., 73. / 255., 94. / 255.);
     let grot = UnitQuaternion::from_axis_angle(&Vector::x_axis(), PI / 2.);
     ground.append_rotation(&grot);
-    ground.append_translation(&Translation3::new(0., 0., 0.));
+    ground.append_translation(&Translation3::new(0., -0.5, 0.));
 }

@@ -1,14 +1,18 @@
 mod health;
 mod movement;
+mod score;
 
 use super::CurrentInput;
 use crate::{components::*, util::*};
 use health::HealthSystem;
 use movement::MoveSystem;
+use score::ScoreSystem;
 use specs::prelude::*;
 use specs_bundler::{Bundle, Bundler};
 use specs_time::{TimeBundle, TimeSystem};
 use specs_transform::TransformBundle;
+
+pub use score::Score;
 
 type TimePrecision = f32;
 type Time = specs_time::Time<TimePrecision>;
@@ -30,20 +34,22 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for SimBundle<'deps> {
         bundler.world.register::<Vel>();
         bundler.world.register::<Transform>();
         bundler.world.register::<Health>();
+        bundler.world.insert(Score::default());
+
         bundler = bundler
             .bundle(TimeBundle::<TimePrecision>::default())
             .unwrap()
             .bundle(TransformBundle::<D>::default())
             .unwrap();
-        bundler.dispatcher_builder = bundler.dispatcher_builder.with(
-            MoveSystem,
-            "movement_system",
-            &[TimeSystem::<TimePrecision>::name()],
-        );
-        bundler.dispatcher_builder =
-            bundler
-                .dispatcher_builder
-                .with(HealthSystem, "health_system", &[]);
+        bundler.dispatcher_builder = bundler
+            .dispatcher_builder
+            .with(
+                MoveSystem,
+                MoveSystem::name(),
+                &[TimeSystem::<TimePrecision>::name()],
+            )
+            .with(ScoreSystem, "score_system", &[MoveSystem::name()])
+            .with(HealthSystem, "health_system", &[]);
         Ok(bundler)
     }
 }
