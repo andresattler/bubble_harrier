@@ -1,4 +1,5 @@
 mod collide;
+mod damage;
 mod health;
 mod movement;
 mod score;
@@ -6,6 +7,7 @@ mod score;
 use super::CurrentInput;
 use crate::{components::*, util::*};
 use collide::CollisionSystem;
+use damage::DamageSystem;
 use health::HealthSystem;
 use movement::MoveSystem;
 use score::ScoreSystem;
@@ -58,7 +60,12 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for SimBundle<'deps> {
                 &[MoveSystem::name()],
             )
             .with(ScoreSystem, "score_system", &[MoveSystem::name()])
-            .with(HealthSystem, "health_system", &[CollisionSystem::name()]);
+            .with(
+                DamageSystem,
+                DamageSystem::name(),
+                &[CollisionSystem::name()],
+            )
+            .with(HealthSystem, "health_system", &[DamageSystem::name()]);
         Ok(bundler)
     }
 }
