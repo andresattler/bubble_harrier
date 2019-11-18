@@ -1,8 +1,10 @@
+mod collide;
 mod movement;
 mod score;
 
 use super::CurrentInput;
 use crate::{components::*, util::*};
+use collide::CollisionSystem;
 use movement::MoveSystem;
 use score::ScoreSystem;
 use specs::prelude::*;
@@ -31,6 +33,8 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for SimBundle<'deps> {
         bundler.world.register::<ObjectKind>();
         bundler.world.register::<Vel>();
         bundler.world.register::<Transform>();
+        bundler.world.register::<Extent>();
+        bundler.world.register::<Collision>();
         bundler.world.insert(Score::default());
         bundler = bundler
             .bundle(TimeBundle::<TimePrecision>::default())
@@ -43,6 +47,11 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for SimBundle<'deps> {
                 MoveSystem,
                 MoveSystem::name(),
                 &[TimeSystem::<TimePrecision>::name()],
+            )
+            .with(
+                CollisionSystem,
+                CollisionSystem::name(),
+                &[MoveSystem::name()],
             )
             .with(ScoreSystem, "score_system", &[MoveSystem::name()]);
         Ok(bundler)
