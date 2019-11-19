@@ -17,13 +17,14 @@ impl InputSystem {
         Self { win }
     }
 
+    #[allow(dead_code)]
     pub fn name() -> &'static str {
         "kiss::input_system"
     }
 }
 
 impl<'s> specs::System<'s> for InputSystem {
-    type SystemData = (Write<'s, CurrentInput>);
+    type SystemData = Write<'s, CurrentInput>;
 
     fn run(&mut self, mut c_in: Self::SystemData) {
         self.win.borrow().events().iter().for_each(|ev| {

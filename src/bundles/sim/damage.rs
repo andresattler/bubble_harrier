@@ -1,6 +1,4 @@
-use crate::{components::*, util::*};
-use log::debug;
-use nc::bounding_volume::bounding_volume::*;
+use crate::components::*;
 use specs::prelude::*;
 
 pub struct DamageSystem;
