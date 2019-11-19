@@ -1,9 +1,13 @@
+mod collide;
+mod damage;
 mod health;
 mod movement;
 mod score;
 
 use super::CurrentInput;
 use crate::{components::*, util::*};
+use collide::CollisionSystem;
+use damage::DamageSystem;
 use health::HealthSystem;
 use movement::MoveSystem;
 use score::ScoreSystem;
@@ -33,6 +37,8 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for SimBundle<'deps> {
         bundler.world.register::<ObjectKind>();
         bundler.world.register::<Vel>();
         bundler.world.register::<Transform>();
+        bundler.world.register::<Extent>();
+        bundler.world.register::<Collision>();
         bundler.world.register::<Health>();
         bundler.world.insert(Score::default());
 
@@ -48,8 +54,18 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for SimBundle<'deps> {
                 MoveSystem::name(),
                 &[TimeSystem::<TimePrecision>::name()],
             )
+            .with(
+                CollisionSystem,
+                CollisionSystem::name(),
+                &[MoveSystem::name()],
+            )
             .with(ScoreSystem, "score_system", &[MoveSystem::name()])
-            .with(HealthSystem, "health_system", &[]);
+            .with(
+                DamageSystem,
+                DamageSystem::name(),
+                &[CollisionSystem::name()],
+            )
+            .with(HealthSystem, "health_system", &[DamageSystem::name()]);
         Ok(bundler)
     }
 }

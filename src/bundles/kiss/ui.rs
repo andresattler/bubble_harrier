@@ -1,6 +1,6 @@
 use super::SharedWindow;
-use crate::{components::*, util::*};
 use crate::bundles::sim::Score;
+use crate::{components::*, util::*};
 use kiss3d::text::Font;
 use nalgebra::Point2;
 use specs::prelude::*;
@@ -14,6 +14,7 @@ impl UiSystem {
         Self { win }
     }
 
+    #[allow(dead_code)]
     pub fn name() -> &'static str {
         "kiss::ui_system"
     }
@@ -24,15 +25,16 @@ impl<'s> specs::System<'s> for UiSystem {
         Read<'s, Score>,
         ReadStorage<'s, Health>,
         ReadStorage<'s, ObjectKind>,
-        );
+    );
 
     fn run(&mut self, (score, healths, kinds): Self::SystemData) {
-        let player = (&healths, &kinds).join().find(|(_,kind)| {
-            match kind {
+        let player = (&healths, &kinds)
+            .join()
+            .find(|(_, kind)| match kind {
                 ObjectKind::Player => true,
                 _ => false,
-            }
-        }).unwrap();
+            })
+            .unwrap();
         let font = Font::default();
         self.win.borrow_mut().draw_text(
             &format!("Score: {}", *score),
