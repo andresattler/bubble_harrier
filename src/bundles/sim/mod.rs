@@ -3,6 +3,7 @@ mod damage;
 mod health;
 mod movement;
 mod score;
+mod obstacle_spawn;
 
 use super::CurrentInput;
 use crate::{components::*, util::*};
@@ -11,6 +12,7 @@ use damage::DamageSystem;
 use health::HealthSystem;
 use movement::MoveSystem;
 use score::ScoreSystem;
+use obstacle_spawn::ObstacleSpawnSystem;
 use specs::prelude::*;
 use specs_bundler::{Bundle, Bundler};
 use specs_time::{TimeBundle, TimeSystem};
@@ -65,7 +67,8 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for SimBundle<'deps> {
                 DamageSystem::name(),
                 &[CollisionSystem::name()],
             )
-            .with(HealthSystem, "health_system", &[DamageSystem::name()]);
+            .with(HealthSystem, "health_system", &[DamageSystem::name()])
+            .with(ObstacleSpawnSystem, ObstacleSpawnSystem::name(), &[MoveSystem::name()]);
         Ok(bundler)
     }
 }
