@@ -1,4 +1,5 @@
 use crate::{components::*, util::*};
+use rand::{thread_rng, Rng};
 use specs::prelude::*;
 use specs_transform::Transform3D;
 
@@ -30,18 +31,27 @@ impl<'s> specs::System<'s> for ObstacleSpawnSystem {
                 let obstacle = entities.create();
                 updater.insert(obstacle, ObjectKind::Obstacle);
                 updater.insert(obstacle, Extent::new(1.));
-                updater.insert(
-                    obstacle,
-                    Transform3D::<D>::default().with_position([3., 0., ptrans.position[2] + 200.]),
-                );
-                updater.insert(obstacle, Extent::new(1.));
-                updater.insert(
-                    obstacle,
-                    Health {
-                        current: 1,
-                        full: 1,
-                    },
-                );
+                let mut rng = thread_rng();
+                let row_lenght = rng.gen_range(1, 5);
+                for _i in 1..=row_lenght {
+                    let rand_x = rng.gen_range(RIGHT_BOUND, LEFT_BOUND);
+                    updater.insert(
+                        obstacle,
+                        Transform3D::<D>::default().with_position([
+                            rand_x,
+                            0.,
+                            ptrans.position[2] + 200.,
+                        ]),
+                    );
+                    updater.insert(obstacle, Extent::new(1.));
+                    updater.insert(
+                        obstacle,
+                        Health {
+                            current: 1,
+                            full: 1,
+                        },
+                    );
+                }
             }
         }
     }
