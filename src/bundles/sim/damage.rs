@@ -1,4 +1,5 @@
 use crate::components::*;
+use crate::resources::*;
 use specs::prelude::*;
 
 pub struct DamageSystem;
@@ -11,21 +12,18 @@ impl DamageSystem {
 
 impl<'s> specs::System<'s> for DamageSystem {
     type SystemData = (
+        ReadExpect<'s, Player>,
         WriteStorage<'s, Health>,
         WriteStorage<'s, Collision>,
-        ReadStorage<'s, ObjectKind>,
         Entities<'s>,
     );
 
-    fn run(&mut self, (mut healths, mut collisions, objs, ents): Self::SystemData) {
-        if let Some((_, phealth)) = (&objs, &mut healths)
-            .join()
-            .find(|(obj, _)| obj.is_player())
-        {
-            let collided_ents: Vec<Entity> = (&collisions, &objs, &ents)
+    fn run(&mut self, (player, mut healths, mut collisions, ents): Self::SystemData) {
+        if let Some(phealth) = healths.get_mut(**player) {
+            let collided_ents: Vec<Entity> = (&collisions, &ents)
                 .join()
-                .filter(|(_, obj, _)| !obj.is_player())
-                .map(|(_, _, ent)| {
+                .filter(|(_, ent)| *ent != **player)
+                .map(|(_, ent)| {
                     phealth.current -= 1;
                     ent
                 })

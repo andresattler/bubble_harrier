@@ -1,5 +1,5 @@
 use crate::bundles::{KissBundle, SimBundle};
-use crate::{components::*, util::*};
+use crate::{components::*, resources::*, util::*};
 use specs::prelude::*;
 use specs_bundler::Bundler;
 use specs_transform::Transform3D;
@@ -56,7 +56,7 @@ fn add_entities(world: &mut World) {
             full: 1,
         })
         .build();
-    world
+    let player = world
         .create_entity()
         .with(ObjectKind::Player)
         .with(Transform3D::<D>::default())
@@ -67,4 +67,6 @@ fn add_entities(world: &mut World) {
             full: 5,
         })
         .build();
+    world.insert(Player(player));
+    world.insert(Score::default());
 }

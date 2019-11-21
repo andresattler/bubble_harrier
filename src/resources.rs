@@ -1,4 +1,17 @@
+use specs::Entity;
 use std::fmt::{Display, Formatter, Result as DRes};
+use std::ops::Deref;
+
+#[derive(Clone, Copy, Debug)]
+pub struct Player(pub Entity);
+
+impl Deref for Player {
+    type Target = Entity;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
 
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Score {

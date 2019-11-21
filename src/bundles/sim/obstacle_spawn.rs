@@ -1,4 +1,4 @@
-use crate::{components::*, util::*};
+use crate::{components::*, resources::*, util::*};
 use rand::{thread_rng, Rng};
 use specs::prelude::*;
 use specs_transform::Transform3D;
@@ -15,17 +15,14 @@ impl ObstacleSpawnSystem {
 
 impl<'s> specs::System<'s> for ObstacleSpawnSystem {
     type SystemData = (
+        ReadExpect<'s, Player>,
         ReadStorage<'s, Transform>,
-        ReadStorage<'s, ObjectKind>,
         Entities<'s>,
         Read<'s, LazyUpdate>,
     );
 
-    fn run(&mut self, (transforms, kinds, entities, updater): Self::SystemData) {
-        if let Some((_, ptrans)) = (&kinds, &transforms)
-            .join()
-            .find(|(obj, _)| obj.is_player())
-        {
+    fn run(&mut self, (player, transforms, entities, updater): Self::SystemData) {
+        if let Some(ptrans) = transforms.get(player.0) {
             let py_int = ptrans.position[2] as u32;
             if py_int % DISTANCE == 0 {
                 let obstacle = entities.create();
