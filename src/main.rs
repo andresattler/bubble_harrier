@@ -6,6 +6,7 @@ extern crate ncollide3d as nc;
 mod bundles;
 mod components;
 mod game;
+mod resources;
 mod util;
 
 fn main() {

@@ -1,6 +1,5 @@
 use super::SharedWindow;
-use crate::bundles::sim::Score;
-use crate::{components::*, util::*};
+use crate::{components::*, resources::*, util::*};
 use kiss3d::text::Font;
 use nalgebra::Point2;
 use specs::prelude::*;

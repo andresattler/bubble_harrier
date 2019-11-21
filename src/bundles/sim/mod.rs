@@ -7,7 +7,7 @@ mod obstacle_spawn;
 mod score;
 
 use super::CurrentInput;
-use crate::{components::*, util::*};
+use crate::{components::*, resources::*, util::*};
 use collide::CollisionSystem;
 use damage::DamageSystem;
 use despawn::DespawnSystem;
@@ -19,8 +19,6 @@ use specs::prelude::*;
 use specs_bundler::{Bundle, Bundler};
 use specs_time::{TimeBundle, TimeSystem};
 use specs_transform::TransformBundle;
-
-pub use score::Score;
 
 type TimePrecision = f32;
 type Time = specs_time::Time<TimePrecision>;
