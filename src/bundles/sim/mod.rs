@@ -1,24 +1,24 @@
 mod collide;
 mod damage;
+mod despawn;
 mod health;
 mod movement;
-mod score;
 mod obstacle_spawn;
+mod score;
 
 use super::CurrentInput;
-use crate::{components::*, util::*};
+use crate::{components::*, resources::*, util::*};
 use collide::CollisionSystem;
 use damage::DamageSystem;
+use despawn::DespawnSystem;
 use health::HealthSystem;
 use movement::MoveSystem;
-use score::ScoreSystem;
 use obstacle_spawn::ObstacleSpawnSystem;
+use score::ScoreSystem;
 use specs::prelude::*;
 use specs_bundler::{Bundle, Bundler};
 use specs_time::{TimeBundle, TimeSystem};
 use specs_transform::TransformBundle;
-
-pub use score::Score;
 
 type TimePrecision = f32;
 type Time = specs_time::Time<TimePrecision>;
@@ -68,7 +68,12 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for SimBundle<'deps> {
                 &[CollisionSystem::name()],
             )
             .with(HealthSystem, "health_system", &[DamageSystem::name()])
-            .with(ObstacleSpawnSystem, ObstacleSpawnSystem::name(), &[MoveSystem::name()]);
+            .with(
+                ObstacleSpawnSystem,
+                ObstacleSpawnSystem::name(),
+                &[MoveSystem::name()],
+            )
+            .with(DespawnSystem, DespawnSystem::name(), &[MoveSystem::name()]);
         Ok(bundler)
     }
 }
