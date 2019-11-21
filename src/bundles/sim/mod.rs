@@ -42,7 +42,6 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for SimBundle<'deps> {
         bundler.world.register::<Extent>();
         bundler.world.register::<Collision>();
         bundler.world.register::<Health>();
-        bundler.world.insert(Score::default());
 
         bundler = bundler
             .bundle(TimeBundle::<TimePrecision>::default())

@@ -1,4 +1,4 @@
-use crate::{components::*, util::*};
+use crate::{components::*, resources::*, util::*};
 use specs::prelude::*;
 
 pub struct DespawnSystem;
@@ -13,17 +13,14 @@ impl DespawnSystem {
 
 impl<'s> specs::System<'s> for DespawnSystem {
     type SystemData = (
+        ReadExpect<'s, Player>,
         ReadStorage<'s, Transform>,
-        ReadStorage<'s, ObjectKind>,
         Entities<'s>,
         Read<'s, LazyUpdate>,
     );
 
-    fn run(&mut self, (transforms, kinds, entities, updater): Self::SystemData) {
-        if let Some((_, ptrans)) = (&kinds, &transforms)
-            .join()
-            .find(|(obj, _)| obj.is_player())
-        {
+    fn run(&mut self, (player, transforms, entities, updater): Self::SystemData) {
+        if let Some(ptrans) = transforms.get(**player) {
             let oob_ents = (&transforms, &entities)
                 .join()
                 .filter(|(trans, _)| {
