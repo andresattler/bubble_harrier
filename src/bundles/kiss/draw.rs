@@ -2,46 +2,65 @@ use super::SharedWindow;
 use crate::{components::*, util::*};
 use kiss3d::scene::SceneNode;
 use specs::prelude::*;
+use std::collections::{BTreeMap, BTreeSet};
 
 pub struct DrawSystem {
     win: SharedWindow,
-    nodes: Vec<SceneNode>,
+    nodes: BTreeMap<Entity, SceneNode>,
 }
 
 impl DrawSystem {
     pub fn new(win: SharedWindow) -> Self {
         Self {
             win,
-            nodes: Vec::new(),
+            nodes: Default::default(),
         }
     }
 
-    /// I'll be damned if this works.
-    fn clear(&mut self) {
-        let mut new_nodes = Vec::new();
-        std::mem::swap(&mut self.nodes, &mut new_nodes);
-        new_nodes
-            .into_iter()
-            .for_each(|mut node| self.win.borrow_mut().remove_node(&mut node));
+    /// Clean all nodes except for those that were seen in the rendering run.
+    fn clean_except(&mut self, seen: &BTreeSet<Entity>) {
+        let nodes = &mut self.nodes;
+        let mut win = self.win.borrow_mut();
+        let not_seen = {
+            nodes
+                .keys()
+                .filter(|ent| !seen.contains(&ent))
+                .cloned()
+                .collect::<Vec<_>>()
+        };
+        not_seen
+            .iter()
+            .filter_map(|ent| nodes.remove(ent))
+            .for_each(|mut node| {
+                win.remove_node(&mut node);
+            });
     }
 }
 
 impl<'s> specs::System<'s> for DrawSystem {
-    type SystemData = (ReadStorage<'s, Transform>, ReadStorage<'s, ObjectKind>);
+    type SystemData = (
+        ReadStorage<'s, Transform>,
+        WriteStorage<'s, NodeBuilder>,
+        Entities<'s>,
+    );
 
-    fn run(&mut self, (transforms, object_kinds): Self::SystemData) {
-        self.clear();
-        for (trans, kind) in (&transforms, &object_kinds).join() {
-            let mut node = match kind {
-                ObjectKind::Player => {
-                    let mut n = self.win.borrow_mut().add_cube(1., 1., 1.);
-                    n.set_color(243. / 255., 156. / 255., 18. / 255.);
-                    n
-                },
-                ObjectKind::Obstacle => self.win.borrow_mut().add_sphere(1.),
-            };
-            node.append_transformation(&translate_trans(&trans));
-            self.nodes.push(node);
-        }
+    /// Updates all nodes that are still attached to entities.
+    /// If entities are not seen, they are cleaned up afterwards.
+    fn run(&mut self, (transforms, mut node_builders, entities): Self::SystemData) {
+        let seen = {
+            let nodes = &mut self.nodes;
+            let mut win = self.win.borrow_mut();
+            (&transforms, &mut node_builders, &entities)
+                .join()
+                .map(|(trans, builder, ent)| {
+                    nodes
+                        .entry(ent)
+                        .or_insert_with(|| builder.build(&mut win))
+                        .set_local_transformation(translate_trans(&trans));
+                    ent
+                })
+                .collect()
+        };
+        self.clean_except(&seen);
     }
 }
