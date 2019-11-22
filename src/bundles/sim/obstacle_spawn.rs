@@ -18,11 +18,7 @@ impl ObstacleSpawnSystem {
         updater.insert(obstacle, Extent::new(1.));
         updater.insert(
             obstacle,
-            Transform3D::<D>::default().with_position([
-                x,
-                0.,
-                z + 200.,
-            ]),
+            Transform3D::<D>::default().with_position([x, 0., z + 200.]),
         );
         updater.insert(obstacle, Extent::new(1.));
         updater.insert(
@@ -37,13 +33,25 @@ impl ObstacleSpawnSystem {
     fn add_row(updater: &LazyUpdate, entities: &Entities, z: f32) {
         let mut rng = thread_rng();
         let row_lenght = rng.gen_range(1, 5);
-        for _i in 1..=row_lenght {
-            let rand_x = rng.gen_range(RIGHT_BOUND, LEFT_BOUND);
-            Self::add_obstacle(&updater, &entities, rand_x, z)
-        }
-        
-    }
+        let rand_x = rng.gen_range(RIGHT_BOUND as i32, LEFT_BOUND as i32);
+        let mut left_x = rand_x as f32;
+        let mut right_x = rand_x as f32;
 
+        println!("----- rand_x {}", rand_x);
+        for i in 1..=row_lenght {
+            let x = if i == 1 {
+                rand_x as f32
+            } else if i % 2 == 0 {
+                    left_x -= 2.;
+                    left_x
+                } else {
+                    right_x += 2.;
+                    right_x
+                };
+            println!("{}", x);
+            Self::add_obstacle(&updater, &entities, x, z)
+        }
+    }
 }
 
 impl<'s> specs::System<'s> for ObstacleSpawnSystem {
