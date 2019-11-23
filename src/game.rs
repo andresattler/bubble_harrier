@@ -1,10 +1,8 @@
-use crate::bundles::{KissBundle, SimBundle};
-use crate::config::Configuration;
+use crate::bundles::{CoreBundle, KissBundle, SimBundle};
 use crate::{components::*, resources::*, util::*};
 use specs::prelude::*;
 use specs_bundler::Bundler;
 use specs_transform::Transform3D;
-use toml::from_str;
 
 pub struct Game<'s> {
     world: World,
@@ -16,13 +14,14 @@ impl<'s> Game<'s> {
         let mut world: World = World::new();
 
         let dispatcher = Bundler::new(&mut world, DispatcherBuilder::new())
+            .bundle(CoreBundle::default())
+            .expect("Unable to bundle CoreBundle")
             .bundle(SimBundle::default())
             .expect("Unable to bundle SimBundle")
             .bundle(KissBundle::default())
             .expect("Unable to bundle KissBundle")
             .build();
         add_entities(&mut world);
-        load_config(&mut world);
         Self { world, dispatcher }
     }
 
@@ -36,12 +35,6 @@ impl<'s> Game<'s> {
             self.run_frame()
         }
     }
-}
-
-fn load_config(world: &mut World) {
-    let config_str = std::fs::read_to_string("assets/config.toml").expect("Unable to load config!");
-    let configuration: Configuration = from_str(&config_str).expect("Unable to parse config.");
-    world.insert(configuration);
 }
 
 fn add_entities(world: &mut World) {
