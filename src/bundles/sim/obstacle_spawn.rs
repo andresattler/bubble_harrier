@@ -26,15 +26,21 @@ impl ObstacleSpawnSystem {
             .build();
     }
 
-    fn add_row(updater: &LazyUpdate, entities: &Entities, z: f32) {
+    fn add_multiple(updater: &LazyUpdate, entities: &Entities, amount: u32, z: f32) {
         let mut rng = thread_rng();
-        let row_lenght = rng.gen_range(1, 5);
+        for _ in 1..=amount {
+            let rand_x = rng.gen_range(RIGHT_BOUND, LEFT_BOUND);
+            Self::add_obstacle(&updater, &entities, rand_x, z);
+        }
+    }
+    fn add_row(updater: &LazyUpdate, entities: &Entities, row_length: u32, z: f32) {
+        let mut rng = thread_rng();
         let rand_x = rng.gen_range(RIGHT_BOUND as i32, LEFT_BOUND as i32);
         let mut left_x = rand_x as f32;
         let mut right_x = rand_x as f32;
 
         Self::add_obstacle(&updater, &entities, rand_x as f32, z);
-        for i in 1..=row_lenght {
+        for i in 1..=row_length {
             if i % 2 == 0 && left_x + 2.0 < LEFT_BOUND {
                 left_x += 2.;
                 Self::add_obstacle(&updater, &entities, left_x, z);
@@ -59,8 +65,17 @@ impl<'s> specs::System<'s> for ObstacleSpawnSystem {
         self.cooldown = (self.cooldown - time.delta()).max(zero());
         if let Some(ptrans) = transforms.get(player.0) {
             if self.cooldown <= zero() {
-                Self::add_row(&updater, &entities, ptrans.position[2]);
                 let mut rng = thread_rng();
+                let amount = rng.gen_range(1, 5);
+                let p = rng.gen_range(1, 3);
+                match p {
+                    1 => {
+                        Self::add_row(&updater, &entities, amount, ptrans.position[2]);
+                    },
+                    _ => {
+                        Self::add_multiple(&updater, &entities, amount, ptrans.position[2]);
+                    }
+                }
                 self.cooldown = rng.gen_range(Self::COOLDOWN / 3., Self::COOLDOWN);
             }
         }
