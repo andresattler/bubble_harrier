@@ -18,7 +18,6 @@ impl ObstacleSpawnSystem {
         updater
             .create_entity(&entities)
             .with(ObjectKind::Obstacle)
-            .with(Extent::new(1.))
             .with(Transform::default().with_position([x, 0., z + 200.]))
             .with(NodeBuilder::obstacle())
             .with(Extent::new(1.))
