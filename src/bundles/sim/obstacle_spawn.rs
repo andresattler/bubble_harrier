@@ -1,33 +1,29 @@
 use crate::{components::*, resources::*, util::*};
+use na::zero;
 use rand::{thread_rng, Rng};
 use specs::prelude::*;
-use specs_transform::Transform3D;
 
-pub struct ObstacleSpawnSystem;
-
-const DISTANCE: u32 = 25;
+#[derive(Default)]
+pub struct ObstacleSpawnSystem {
+    cooldown: TimePrecision,
+}
 
 impl ObstacleSpawnSystem {
+    const COOLDOWN: TimePrecision = 1.;
     pub fn name() -> &'static str {
         "sim::obstacle_spawn_system"
     }
 
     fn add_obstacle(updater: &LazyUpdate, entities: &Entities, x: f32, z: f32) {
-        let obstacle = entities.create();
-        updater.insert(obstacle, ObjectKind::Obstacle);
-        updater.insert(obstacle, Extent::new(1.));
-        updater.insert(
-            obstacle,
-            Transform3D::<D>::default().with_position([x, 0., z + 200.]),
-        );
-        updater.insert(obstacle, Extent::new(1.));
-        updater.insert(
-            obstacle,
-            Health {
-                current: 1,
-                full: 1,
-            },
-        );
+        updater
+            .create_entity(&entities)
+            .with(ObjectKind::Obstacle)
+            .with(Extent::new(1.))
+            .with(Transform::default().with_position([x, 0., z + 200.]))
+            .with(NodeBuilder::obstacle())
+            .with(Extent::new(1.))
+            .with(Health::one())
+            .build();
     }
 
     fn add_row(updater: &LazyUpdate, entities: &Entities, z: f32) {
@@ -43,12 +39,12 @@ impl ObstacleSpawnSystem {
             let x = if i == 0 {
                 rand_x as f32
             } else if i % 2 == 0 {
-                    left_x -= 2.;
-                    left_x
-                } else {
-                    right_x += 2.;
-                    right_x
-                };
+                left_x -= 2.;
+                left_x
+            } else {
+                right_x += 2.;
+                right_x
+            };
             if left_x < LEFT_BOUND || right_x > RIGHT_BOUND {
                 println!("----- x {}", x);
                 Self::add_obstacle(&updater, &entities, x, z);
@@ -62,19 +58,18 @@ impl<'s> specs::System<'s> for ObstacleSpawnSystem {
     type SystemData = (
         ReadExpect<'s, Player>,
         ReadStorage<'s, Transform>,
-        Write<'s, LastObstaclePlaced>,
         Entities<'s>,
         Read<'s, LazyUpdate>,
+        Read<'s, Time>,
     );
 
-    fn run(&mut self, (player, transforms, mut last_obstacle_placed, entities, updater): Self::SystemData) {
+    fn run(&mut self, (player, transforms, entities, updater, time): Self::SystemData) {
+        self.cooldown = (self.cooldown - time.delta()).max(zero());
         if let Some(ptrans) = transforms.get(player.0) {
-            let py_int = ptrans.position[2] as u32;
-            if last_obstacle_placed.get_last_placed_z() != py_int {
-                if py_int % DISTANCE == 0 {
-                    Self::add_row(&updater, &entities, ptrans.position[2]);
-                    last_obstacle_placed.set_last_placed_z(py_int);
-                }
+            if self.cooldown <= zero() {
+                Self::add_row(&updater, &entities, ptrans.position[2]);
+                let mut rng = thread_rng();
+                self.cooldown = rng.gen_range(Self::COOLDOWN / 3., Self::COOLDOWN);
             }
         }
     }

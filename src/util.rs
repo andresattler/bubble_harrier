@@ -20,6 +20,9 @@ pub type Point = Point3<D>;
 
 pub type Transform = Transform3D<D>;
 
+pub type TimePrecision = f32;
+pub type Time = specs_time::Time<TimePrecision>;
+
 /// Translates a specs Transform to a nalgebra Isometry3 (Transform)
 /// TODO Check whether this rotation is ok.
 pub fn translate_trans(t: &Transform) -> Isometry3<D> {

@@ -1,5 +1,5 @@
-use super::{CurrentInput, Time};
-use crate::{components::*, util::*};
+use super::Time;
+use crate::{components::*, resources::CurrentInput, util::*};
 use kiss3d::event::Key;
 use specs::prelude::*;
 

@@ -1,4 +1,6 @@
+use kiss3d::event::Key;
 use specs::Entity;
+use std::collections::BTreeSet;
 use std::fmt::{Display, Formatter, Result as DRes};
 use std::ops::Deref;
 
@@ -30,18 +32,7 @@ impl Display for Score {
     }
 }
 
-
-#[derive(Clone, Copy, Debug, Default)]
-pub struct LastObstaclePlaced {
-    pub z: u32,
-}
-
-
-impl LastObstaclePlaced {
-    pub fn get_last_placed_z(&mut self) -> u32 {
-        self.z
-    }
-    pub fn set_last_placed_z(&mut self, z: u32) {
-        self.z = z;
-    }
+#[derive(Clone, Default, Debug)]
+pub struct CurrentInput {
+    pub keys: BTreeSet<Key>,
 }
