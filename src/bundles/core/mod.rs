@@ -1,6 +1,6 @@
 mod config;
 
-use crate::config::Configuration;
+use crate::resources::Configuration;
 use config::*;
 use specs::prelude::*;
 use specs_bundler::{Bundle, Bundler};

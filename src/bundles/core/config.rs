@@ -1,4 +1,4 @@
-use crate::config::Configuration;
+use crate::resources::Configuration;
 use notify::{RecommendedWatcher, RecursiveMode, Watcher};
 use specs::prelude::*;
 use std::fs::read_to_string;

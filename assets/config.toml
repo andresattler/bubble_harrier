@@ -2,8 +2,8 @@
 jump = "W"
 left = "A"
 right = "D"
-shoot = "Space"
+shoot = "LShift"
 
 [player]
-speed_z = 30.0
-speed_x = 20.0
+speed_z = 35.0
+speed_x = 10.0

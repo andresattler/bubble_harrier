@@ -1,5 +1,5 @@
 use super::Time;
-use crate::{components::*, resources::CurrentInput, util::*};
+use crate::{components::*, resources::*, util::*};
 use kiss3d::event::Key;
 use specs::prelude::*;
 
@@ -16,22 +16,24 @@ impl<'s> specs::System<'s> for MoveSystem {
         WriteStorage<'s, Transform>,
         ReadStorage<'s, Vel>,
         ReadStorage<'s, ObjectKind>,
+        Read<'s, Configuration>,
         Read<'s, Time>,
         Read<'s, CurrentInput>,
     );
 
-    fn run(&mut self, (mut trans, vel, kinds, time, inp): Self::SystemData) {
+    fn run(&mut self, (mut trans, vel, kinds, config, time, inp): Self::SystemData) {
         for (mut transform, velocity, kind) in (&mut trans, &vel, &kinds).join() {
             let mut points: [D; 3] = velocity.into();
             if let ObjectKind::Player = kind {
-                let x_movement = if inp.keys.contains(&Key::A) {
-                    10.
-                } else if inp.keys.contains(&Key::D) {
-                    -10.
+                let x_movement = if inp.keys.contains(&config.controls.left) {
+                    config.player.speed_x
+                } else if inp.keys.contains(&config.controls.right) {
+                    -config.player.speed_x
                 } else {
                     0.
                 };
                 points[0] = x_movement;
+                points[2] = config.player.speed_z;
             }
             let new_pos =
                 Vector::from(transform.position) + Vector::from(points).scale(time.delta());

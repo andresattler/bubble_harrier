@@ -8,7 +8,6 @@ extern crate ncollide3d as nc;
 
 mod bundles;
 mod components;
-mod config;
 mod game;
 mod resources;
 mod util;

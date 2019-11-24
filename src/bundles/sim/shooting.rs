@@ -21,6 +21,7 @@ impl<'s> specs::System<'s> for ShootingSystem {
         Read<'s, LazyUpdate>,
         Read<'s, CurrentInput>,
         Read<'s, Time>,
+        Read<'s, Configuration>,
         Entities<'s>,
         ReadStorage<'s, Vel>,
         ReadStorage<'s, Transform>,
@@ -28,10 +29,10 @@ impl<'s> specs::System<'s> for ShootingSystem {
 
     fn run(
         &mut self,
-        (player, updater, input, timer, entities, vels, transform): Self::SystemData,
+        (player, updater, input, timer, config, entities, vels, transform): Self::SystemData,
     ) {
         self.cooldown = (self.cooldown - timer.delta()).max(zero());
-        if self.cooldown <= zero() && input.keys.contains(&Space) {
+        if self.cooldown <= zero() && input.keys.contains(&config.controls.shoot) {
             let ptrans = transform.get(**player).expect("No transform of player?!");
             let mut ntrans = Transform::default().with_position(ptrans.position.clone());
             ntrans.position[1] += 1.; // fire from up

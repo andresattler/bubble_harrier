@@ -1,3 +1,6 @@
+mod config;
+
+pub use config::Configuration;
 use kiss3d::event::Key;
 use specs::Entity;
 use std::collections::BTreeSet;
