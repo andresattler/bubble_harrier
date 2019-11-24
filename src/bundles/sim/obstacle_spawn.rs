@@ -71,7 +71,7 @@ impl<'s> specs::System<'s> for ObstacleSpawnSystem {
                 match p {
                     1 => {
                         Self::add_row(&updater, &entities, amount, ptrans.position[2]);
-                    },
+                    }
                     _ => {
                         Self::add_multiple(&updater, &entities, amount, ptrans.position[2]);
                     }
