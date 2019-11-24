@@ -24,17 +24,23 @@ impl NodeBuilder {
 
     pub fn player() -> Self {
         Self::new("cube", |node| {
-            node.set_color(243. / 255., 156. / 255., 18. / 255.);
+            let color = Color::from([243, 156, 18]);
+            node.set_color(color.r, color.g, color.b);
         })
     }
 
     pub fn obstacle() -> Self {
-        Self::new("sphere", |node| node.set_local_scale(2., 2., 2.))
+        Self::new("sphere", |node| {
+            let converted_color = Color::from([189,195,199]);
+            node.set_color(converted_color.r, converted_color.g, converted_color.b);
+            node.set_local_scale(2., 2., 2.)
+        })
     }
 
     pub fn projectile() -> Self {
         Self::new("cylinder", |node| {
-            node.set_color(102. / 255., 1., 151. / 255.);
+            let converted_color = Color::from([102, 255, 151]);
+            node.set_color(converted_color.r, converted_color.g, converted_color.b);
             let rot = UnitQuaternion::from_axis_angle(&Vector::x_axis(), PI / 2.);
             node.append_rotation(&rot);
             node.set_local_scale(0.5, 0.5, 0.5);
