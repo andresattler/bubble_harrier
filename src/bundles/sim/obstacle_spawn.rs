@@ -33,22 +33,14 @@ impl ObstacleSpawnSystem {
         let mut left_x = rand_x as f32;
         let mut right_x = rand_x as f32;
 
-        let mut i = 0;
-        println!("----- rand_x {}", rand_x);
-        while i < row_lenght {
-            let x = if i == 0 {
-                rand_x as f32
-            } else if i % 2 == 0 {
-                left_x -= 2.;
-                left_x
-            } else {
-                right_x += 2.;
-                right_x
-            };
-            if left_x < LEFT_BOUND || right_x > RIGHT_BOUND {
-                println!("----- x {}", x);
-                Self::add_obstacle(&updater, &entities, x, z);
-                i += 1;
+        Self::add_obstacle(&updater, &entities, rand_x as f32, z);
+        for i in 1..=row_lenght {
+            if i % 2 == 0 && left_x + 2.0 < LEFT_BOUND {
+                left_x += 2.;
+                Self::add_obstacle(&updater, &entities, left_x, z);
+            } else if right_x - 2.0 > RIGHT_BOUND {
+                right_x -= 2.;
+                Self::add_obstacle(&updater, &entities, right_x, z);
             }
         }
     }
