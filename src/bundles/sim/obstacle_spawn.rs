@@ -37,9 +37,10 @@ impl ObstacleSpawnSystem {
         let mut left_x = rand_x as f32;
         let mut right_x = rand_x as f32;
 
+        let mut i = 0;
         println!("----- rand_x {}", rand_x);
-        for i in 1..=row_lenght {
-            let x = if i == 1 {
+        while i < row_lenght {
+            let x = if i == 0 {
                 rand_x as f32
             } else if i % 2 == 0 {
                     left_x -= 2.;
@@ -48,8 +49,11 @@ impl ObstacleSpawnSystem {
                     right_x += 2.;
                     right_x
                 };
-            println!("{}", x);
-            Self::add_obstacle(&updater, &entities, x, z)
+            if left_x < LEFT_BOUND || right_x > RIGHT_BOUND {
+                println!("----- x {}", x);
+                Self::add_obstacle(&updater, &entities, x, z);
+                i += 1;
+            }
         }
     }
 }
@@ -58,15 +62,19 @@ impl<'s> specs::System<'s> for ObstacleSpawnSystem {
     type SystemData = (
         ReadExpect<'s, Player>,
         ReadStorage<'s, Transform>,
+        Write<'s, LastObstaclePlaced>,
         Entities<'s>,
         Read<'s, LazyUpdate>,
     );
 
-    fn run(&mut self, (player, transforms, entities, updater): Self::SystemData) {
+    fn run(&mut self, (player, transforms, mut last_obstacle_placed, entities, updater): Self::SystemData) {
         if let Some(ptrans) = transforms.get(player.0) {
             let py_int = ptrans.position[2] as u32;
-            if py_int % DISTANCE == 0 {
-                Self::add_row(&updater, &entities, ptrans.position[2]);
+            if last_obstacle_placed.get_last_placed_z() != py_int {
+                if py_int % DISTANCE == 0 {
+                    Self::add_row(&updater, &entities, ptrans.position[2]);
+                    last_obstacle_placed.set_last_placed_z(py_int);
+                }
             }
         }
     }

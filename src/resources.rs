@@ -29,3 +29,19 @@ impl Display for Score {
         f.write_str(&format!("{}", (self.distance as u32)))
     }
 }
+
+
+#[derive(Clone, Copy, Debug, Default)]
+pub struct LastObstaclePlaced {
+    pub z: u32,
+}
+
+
+impl LastObstaclePlaced {
+    pub fn get_last_placed_z(&mut self) -> u32 {
+        self.z
+    }
+    pub fn set_last_placed_z(&mut self, z: u32) {
+        self.z = z;
+    }
+}

@@ -69,4 +69,5 @@ fn add_entities(world: &mut World) {
         .build();
     world.insert(Player(player));
     world.insert(Score::default());
+    world.insert(LastObstaclePlaced::default());
 }
