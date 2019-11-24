@@ -1,5 +1,8 @@
+mod node_builder;
+
 use crate::util::*;
 use nc::bounding_volume::aabb::AABB;
+pub use node_builder::NodeBuilder;
 use specs::prelude::*;
 
 #[derive(Clone, Copy, Debug)]
@@ -22,25 +25,21 @@ impl Into<Vel> for ObjectKind {
     }
 }
 
-impl ObjectKind {
-    #[inline]
-    pub fn is_player(self) -> bool {
-        match self {
-            ObjectKind::Obstacle => false,
-            ObjectKind::Player => true,
-        }
+#[derive(Clone, Copy, Debug)]
+pub struct Collision(pub ObjectKind);
+
+impl Collision {
+    pub fn new(k: ObjectKind) -> Self {
+        Self(k)
     }
 }
 
-#[derive(Clone, Copy, Debug, Default)]
-pub struct Collision;
-
 impl Component for Collision {
-    type Storage = NullStorage<Self>;
+    type Storage = DenseVecStorage<Self>;
 }
 
 #[derive(Clone, Copy, Debug)]
-pub struct Vel([D; 3]);
+pub struct Vel(pub [D; 3]);
 
 impl From<[D; 3]> for Vel {
     fn from(i: [D; 3]) -> Self {
@@ -93,4 +92,17 @@ pub struct Health {
 
 impl Component for Health {
     type Storage = DenseVecStorage<Self>;
+}
+
+impl Health {
+    pub fn one() -> Self {
+        Self::at_full(1)
+    }
+
+    pub fn at_full(full: i32) -> Self {
+        Self {
+            current: full,
+            full: full,
+        }
+    }
 }

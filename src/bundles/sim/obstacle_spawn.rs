@@ -1,13 +1,15 @@
 use crate::{components::*, resources::*, util::*};
+use na::zero;
 use rand::{thread_rng, Rng};
 use specs::prelude::*;
-use specs_transform::Transform3D;
 
-pub struct ObstacleSpawnSystem;
-
-const DISTANCE: u32 = 25;
+#[derive(Default)]
+pub struct ObstacleSpawnSystem {
+    cooldown: TimePrecision,
+}
 
 impl ObstacleSpawnSystem {
+    const COOLDOWN: TimePrecision = 1.;
     pub fn name() -> &'static str {
         "sim::obstacle_spawn_system"
     }
@@ -19,36 +21,32 @@ impl<'s> specs::System<'s> for ObstacleSpawnSystem {
         ReadStorage<'s, Transform>,
         Entities<'s>,
         Read<'s, LazyUpdate>,
+        Read<'s, Time>,
     );
 
-    fn run(&mut self, (player, transforms, entities, updater): Self::SystemData) {
+    fn run(&mut self, (player, transforms, entities, updater, time): Self::SystemData) {
+        self.cooldown = (self.cooldown - time.delta()).max(zero());
         if let Some(ptrans) = transforms.get(player.0) {
-            let py_int = ptrans.position[2] as u32;
-            if py_int % DISTANCE == 0 {
-                let obstacle = entities.create();
-                updater.insert(obstacle, ObjectKind::Obstacle);
-                updater.insert(obstacle, Extent::new(1.));
+            if self.cooldown <= zero() {
                 let mut rng = thread_rng();
                 let row_lenght = rng.gen_range(1, 5);
                 for _i in 1..=row_lenght {
                     let rand_x = rng.gen_range(RIGHT_BOUND, LEFT_BOUND);
-                    updater.insert(
-                        obstacle,
-                        Transform3D::<D>::default().with_position([
+                    updater
+                        .create_entity(&entities)
+                        .with(ObjectKind::Obstacle)
+                        .with(Extent::new(1.))
+                        .with(Transform::default().with_position([
                             rand_x,
                             0.,
                             ptrans.position[2] + 200.,
-                        ]),
-                    );
-                    updater.insert(obstacle, Extent::new(1.));
-                    updater.insert(
-                        obstacle,
-                        Health {
-                            current: 1,
-                            full: 1,
-                        },
-                    );
+                        ]))
+                        .with(NodeBuilder::obstacle())
+                        .with(Extent::new(1.))
+                        .with(Health::one())
+                        .build();
                 }
+                self.cooldown = rng.gen_range(Self::COOLDOWN / 3., Self::COOLDOWN);
             }
         }
     }

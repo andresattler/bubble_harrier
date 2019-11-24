@@ -22,7 +22,7 @@ impl<'s> specs::System<'s> for HealthSystem {
                         transform.position = new_pos.into();
                         health.current = health.full;
                     }
-                    ObjectKind::Obstacle => {
+                    _ => {
                         entities.delete(entity).unwrap();
                     }
                 }

@@ -5,9 +5,9 @@ mod health;
 mod movement;
 mod obstacle_spawn;
 mod score;
+mod shooting;
 
-use super::CurrentInput;
-use crate::{components::*, resources::*, util::*};
+use crate::{components::*, util::*};
 use collide::CollisionSystem;
 use damage::DamageSystem;
 use despawn::DespawnSystem;
@@ -15,13 +15,11 @@ use health::HealthSystem;
 use movement::MoveSystem;
 use obstacle_spawn::ObstacleSpawnSystem;
 use score::ScoreSystem;
+use shooting::ShootingSystem;
 use specs::prelude::*;
 use specs_bundler::{Bundle, Bundler};
 use specs_time::{TimeBundle, TimeSystem};
 use specs_transform::TransformBundle;
-
-type TimePrecision = f32;
-type Time = specs_time::Time<TimePrecision>;
 
 #[derive(Debug, Default)]
 pub struct SimBundle<'deps> {
@@ -56,6 +54,11 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for SimBundle<'deps> {
                 &[TimeSystem::<TimePrecision>::name()],
             )
             .with(
+                ShootingSystem::default(),
+                ShootingSystem::name(),
+                &[MoveSystem::name()],
+            )
+            .with(
                 CollisionSystem,
                 CollisionSystem::name(),
                 &[MoveSystem::name()],
@@ -68,7 +71,7 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for SimBundle<'deps> {
             )
             .with(HealthSystem, "health_system", &[DamageSystem::name()])
             .with(
-                ObstacleSpawnSystem,
+                ObstacleSpawnSystem::default(),
                 ObstacleSpawnSystem::name(),
                 &[MoveSystem::name()],
             )

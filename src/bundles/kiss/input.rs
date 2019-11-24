@@ -1,12 +1,7 @@
 use super::SharedWindow;
+use crate::resources::CurrentInput;
 use kiss3d::event::*;
 use specs::prelude::*;
-use std::collections::BTreeSet;
-
-#[derive(Clone, Default, Debug)]
-pub struct CurrentInput {
-    pub keys: BTreeSet<Key>,
-}
 
 pub struct InputSystem {
     win: SharedWindow,

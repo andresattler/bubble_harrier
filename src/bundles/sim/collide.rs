@@ -13,34 +13,48 @@ impl CollisionSystem {
 
 impl<'s> specs::System<'s> for CollisionSystem {
     type SystemData = (
-        ReadExpect<'s, Player>,
+        ReadStorage<'s, ObjectKind>,
         ReadStorage<'s, Transform>,
+        ReadStorage<'s, Vel>,
         ReadStorage<'s, Extent>,
         WriteStorage<'s, Collision>,
         Entities<'s>,
     );
 
-    fn run(&mut self, (player, transform, extent, mut collisions, entities): Self::SystemData) {
-        if let Some((pbox, ptrans)) = extent
-            .get(**player)
-            .and_then(|e| transform.get(**player).map(|t| (e, t)))
-        {
-            let pbox = pbox.bbox().transform_by(&translate_trans(&ptrans));
-            (&transform, &extent, &entities)
-                .join()
-                .filter(|(trans, ext, ent)| {
-                    *ent != **player
-                        && ext
+    fn run(
+        &mut self,
+        (kinds, transform, vels, extent, mut collisions, entities): Self::SystemData,
+    ) {
+        (&kinds, &transform, &vels, &extent, &entities)
+            .par_join()
+            .map(|(dyn_kind, dtrans, _, ext, dyn_ent)| {
+                let bbox = ext.bbox().transform_by(&translate_trans(&dtrans));
+                (&kinds, &transform, !&vels, &extent, &entities)
+                    .join()
+                    .filter(|(_, static_trans, _, static_ext, _)| {
+                        let static_box = static_ext
                             .bbox()
-                            .transform_by(&translate_trans(&trans))
-                            .intersects(&pbox)
-                })
-                .for_each(|(_, _, ent)| {
-                    if let Ok(entry) = collisions.entry(ent) {
-                        debug!("Collision happened.");
-                        entry.or_insert(Collision);
-                    }
-                })
-        }
+                            .transform_by(&translate_trans(&static_trans));
+                        bbox.intersects(&static_box)
+                    })
+                    .map(|static_e| {
+                        (
+                            (static_e.4, Collision::new(*dyn_kind)),
+                            (dyn_ent, Collision::new(*static_e.0)),
+                        )
+                    })
+                    .collect::<Vec<_>>()
+            })
+            .flatten()
+            .collect::<Vec<_>>()
+            .iter()
+            .for_each(|(coll1, coll2)| {
+                collisions
+                    .insert(coll1.0, coll1.1)
+                    .expect("Unable to insert collision.");
+                collisions
+                    .insert(coll2.0, coll2.1)
+                    .expect("Unable to insert collision.");
+            });
     }
 }
