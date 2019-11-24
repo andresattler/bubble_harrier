@@ -29,9 +29,9 @@ impl NodeBuilder {
         })
     }
 
-    pub fn obstacle() -> Self {
-        Self::new("sphere", |node| {
-            let converted_color = Color::from([189,195,199]);
+    pub fn obstacle(color: [u8; 3]) -> Self {
+        Self::new("sphere", move |node| {
+            let converted_color = Color::from(color);
             node.set_color(converted_color.r, converted_color.g, converted_color.b);
             node.set_local_scale(2., 2., 2.)
         })
