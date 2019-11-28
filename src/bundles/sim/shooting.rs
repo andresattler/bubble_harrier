@@ -1,5 +1,4 @@
 use crate::{components::*, resources::*, util::*};
-use kiss3d::event::Key::Space;
 use na::zero;
 use specs::prelude::*;
 
@@ -23,13 +22,12 @@ impl<'s> specs::System<'s> for ShootingSystem {
         Read<'s, Time>,
         Read<'s, Configuration>,
         Entities<'s>,
-        ReadStorage<'s, Vel>,
         ReadStorage<'s, Transform>,
     );
 
     fn run(
         &mut self,
-        (player, updater, input, timer, config, entities, vels, transform): Self::SystemData,
+        (player, updater, input, timer, config, entities, transform): Self::SystemData,
     ) {
         self.cooldown = (self.cooldown - timer.delta()).max(zero());
         if self.cooldown <= zero() && input.keys.contains(&config.controls.shoot) {

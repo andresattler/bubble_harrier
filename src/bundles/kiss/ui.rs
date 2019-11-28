@@ -29,10 +29,9 @@ impl<'s> specs::System<'s> for UiSystem {
         ReadStorage<'s, Transform>,
         ReadStorage<'s, Vel>,
         ReadStorage<'s, Health>,
-        ReadStorage<'s, ObjectKind>,
     );
 
-    fn run(&mut self, (score, pent, trans, vels, healths, kinds): Self::SystemData) {
+    fn run(&mut self, (score, pent, trans, vels, healths): Self::SystemData) {
         let phealth = healths.get(**pent).unwrap();
         let ptrans = trans.get(**pent).unwrap();
         let pvel = vels.get(**pent).unwrap();
