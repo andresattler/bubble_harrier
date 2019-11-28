@@ -37,7 +37,7 @@ impl<'s> specs::System<'s> for ShootingSystem {
             let mut ntrans = Transform::default().with_position(ptrans.position.clone());
             ntrans.position[1] += 1.; // fire from up
             ntrans.position[2] += 1.; // Don't fire inside. Don't shoot yourself.
-            let mut vel = Vel::from(vels.get(**player).expect("Player has no vel?!").0);
+            let mut vel = Vel::from([0., 0., config.player.speed_z * 1.5]);
             vel.0[2] += 40.;
             updater
                 .create_entity(&entities)
