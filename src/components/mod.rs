@@ -6,6 +6,25 @@ pub use node_builder::NodeBuilder;
 use specs::prelude::*;
 
 #[derive(Clone, Copy, Debug)]
+pub struct Force(pub [D; 3]);
+
+impl Force {
+    const GRAVITATIONAL: D = -9.80;
+
+    pub fn y(y: D) -> Self {
+        Self([0., y, 0.])
+    }
+
+    pub fn gravity() -> Self {
+        Self::y(Self::GRAVITATIONAL)
+    }
+}
+
+impl Component for Force {
+    type Storage = DenseVecStorage<Self>;
+}
+
+#[derive(Clone, Copy, Debug)]
 pub enum ObjectKind {
     Player,
     Obstacle,

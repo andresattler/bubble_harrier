@@ -60,6 +60,7 @@ fn add_entities(world: &mut World) {
             current: 5,
             full: 5,
         })
+        .with(Force::gravity())
         .build();
     world.insert(Player(player));
     world.insert(Score::default());
