@@ -9,13 +9,16 @@ pub struct ObstacleSpawnSystem {
 }
 
 impl ObstacleSpawnSystem {
-    const COOLDOWN: TimePrecision = 1.;
+    const COOLDOWN: TimePrecision = 0.8;
+    const HEIGHT_RANGE: (D, D) = (0., 5.);
     pub fn name() -> &'static str {
         "sim::obstacle_spawn_system"
     }
 
     fn add_obstacle(updater: &LazyUpdate, entities: &Entities, x: f32, z: f32) {
         let mut rng = thread_rng();
+        let (lower, upper) = Self::HEIGHT_RANGE;
+        let rand_y = rng.gen_range(lower, upper);
         let (color, health) = match rng.gen_range(0, 10) {
             1..=5 => ([236, 240, 241], 1),
             6..=8 => ([41, 128, 185], 2),
@@ -24,7 +27,7 @@ impl ObstacleSpawnSystem {
         updater
             .create_entity(&entities)
             .with(ObjectKind::Obstacle)
-            .with(Transform::default().with_position([x, 0., z + 200.]))
+            .with(Transform::default().with_position([x, rand_y, z + 200.]))
             .with(NodeBuilder::obstacle(color))
             .with(Extent::new(1.))
             .with(Health::at_full(health))
