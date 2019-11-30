@@ -32,3 +32,21 @@ pub fn translate_trans(t: &Transform) -> Isometry3<D> {
         UnitQuaternion::from_axis_angle(&Vector::x_axis(), PI / 2.),
     )
 }
+
+#[derive(Clone, Copy, Debug)]
+pub struct Color {
+    pub r: f32,
+    pub g: f32,
+    pub b: f32,
+}
+
+impl From<[u8; 3]> for Color {
+    fn from(color: [u8; 3]) -> Self {
+        Color {
+            r: color[0] as f32 / 255.,
+            g: color[1] as f32 / 255.,
+            b: color[2] as f32 / 255.,
+        }
+    }
+}
+

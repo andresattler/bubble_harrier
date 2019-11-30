@@ -36,17 +36,6 @@ impl<'s> Game<'s> {
 }
 
 fn add_entities(world: &mut World) {
-    world
-        .create_entity()
-        .with(ObjectKind::Obstacle)
-        .with(NodeBuilder::obstacle())
-        .with(Extent::new(1.))
-        .with(Transform3D::<D>::default().with_position([3., 0., 40.]))
-        .with(Health {
-            current: 1,
-            full: 1,
-        })
-        .build();
     let player = world
         .create_entity()
         .with(ObjectKind::Player)
