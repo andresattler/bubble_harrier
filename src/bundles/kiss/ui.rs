@@ -35,12 +35,15 @@ impl<'s> specs::System<'s> for UiSystem {
         let phealth = healths.get(**pent).unwrap();
         let ptrans = trans.get(**pent).unwrap();
         let pvel = vels.get(**pent).unwrap();
-        let stats = [
+        let mut stats = vec![
             format!("Score: {}", *score),
-            format!("Trans: {:?}", ptrans),
-            format!("Vel: {:?}", pvel),
-        ]
-        .join("\n");
+            format!("Current Highscore: {}", score.high_score as u64),
+        ];
+        if cfg!(build = "debug") {
+            stats.push(format!("Trans: {:?}", ptrans));
+            stats.push(format!("Vel: {:?}", pvel));
+        }
+        let stats = stats.join("\n");
         self.win.borrow_mut().draw_text(
             &stats,
             &Point2::origin(),
