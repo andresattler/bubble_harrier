@@ -1,4 +1,7 @@
+#[macro_use]
+extern crate serde_derive;
 extern crate env_logger;
+#[macro_use]
 extern crate log;
 extern crate nalgebra as na;
 extern crate ncollide3d as nc;

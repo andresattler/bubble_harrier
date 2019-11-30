@@ -1,4 +1,4 @@
-use crate::bundles::{KissBundle, SimBundle};
+use crate::bundles::{CoreBundle, KissBundle, SimBundle};
 use crate::{components::*, resources::*, util::*};
 use specs::prelude::*;
 use specs_bundler::Bundler;
@@ -14,6 +14,8 @@ impl<'s> Game<'s> {
         let mut world: World = World::new();
 
         let dispatcher = Bundler::new(&mut world, DispatcherBuilder::new())
+            .bundle(CoreBundle::default())
+            .expect("Unable to bundle CoreBundle")
             .bundle(SimBundle::default())
             .expect("Unable to bundle SimBundle")
             .bundle(KissBundle::default())
@@ -47,6 +49,7 @@ fn add_entities(world: &mut World) {
             current: 5,
             full: 5,
         })
+        .with(Force::gravity())
         .build();
     world.insert(Player(player));
     world.insert(Score::default());

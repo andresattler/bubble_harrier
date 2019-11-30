@@ -1,0 +1,9 @@
+[controls]
+jump = "W"
+left = "A"
+right = "D"
+shoot = "LShift"
+
+[player]
+speed_z = 35.0
+speed_x = 10.0

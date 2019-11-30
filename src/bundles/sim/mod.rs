@@ -1,3 +1,4 @@
+mod acceleration;
 mod collide;
 mod damage;
 mod despawn;
@@ -8,6 +9,7 @@ mod score;
 mod shooting;
 
 use crate::{components::*, util::*};
+use acceleration::AccelerationSystem;
 use collide::CollisionSystem;
 use damage::DamageSystem;
 use despawn::DespawnSystem;
@@ -39,6 +41,7 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for SimBundle<'deps> {
         bundler.world.register::<Transform>();
         bundler.world.register::<Extent>();
         bundler.world.register::<Collision>();
+        bundler.world.register::<Force>();
         bundler.world.register::<Health>();
 
         bundler = bundler
@@ -49,9 +52,17 @@ impl<'deps, 'world, 'a, 'b> Bundle<'world, 'a, 'b> for SimBundle<'deps> {
         bundler.dispatcher_builder = bundler
             .dispatcher_builder
             .with(
+                AccelerationSystem,
+                AccelerationSystem::name(),
+                &[TimeSystem::<TimePrecision>::name()],
+            )
+            .with(
                 MoveSystem,
                 MoveSystem::name(),
-                &[TimeSystem::<TimePrecision>::name()],
+                &[
+                    TimeSystem::<TimePrecision>::name(),
+                    AccelerationSystem::name(),
+                ],
             )
             .with(
                 ShootingSystem::default(),
